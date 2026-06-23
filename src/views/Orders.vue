@@ -68,8 +68,14 @@ const formatDate = (dateStr) => {
         </div>
 
         <div class="order-footer">
-          <span>Total Amount</span>
-          <span class="order-total">${{ order.total_amount }}</span>
+          <div class="shipping-info">
+            <span class="label">Shipping to:</span>
+            <span class="address">{{ order.address }}</span>
+          </div>
+          <div class="total-info">
+            <span>Total Amount</span>
+            <span class="order-total">${{ order.total }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -187,10 +193,36 @@ const formatDate = (dateStr) => {
 .order-footer {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   padding-top: 1.5rem;
   border-top: 1px solid var(--border);
-  font-weight: 600;
+}
+
+.shipping-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-width: 60%;
+}
+
+.shipping-info .label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.shipping-info .address {
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.total-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
 }
 
 .order-total {

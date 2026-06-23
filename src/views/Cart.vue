@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, inject } from 'vue';
+import { onMounted, inject, ref } from 'vue';
 import { useCartStore } from '@/stores/cart';
 import api from '@/api/axios';
 import { useRouter } from 'vue-router';
@@ -8,6 +8,8 @@ import { getImageUrl } from '@/utils/image';
 const cartStore = useCartStore();
 const router = useRouter();
 const showToast = inject('showToast');
+
+const address = ref('');
 
 onMounted(async () => {
     await cartStore.fetchCart();
@@ -18,13 +20,18 @@ const removeFromCart = async (id) => {
 };
 
 const checkout = async () => {
+    if (!address.value) {
+        showToast('Please enter your shipping address');
+        return;
+    }
+
     try {
-        await api.post('/orders');
+        await api.post('/orders', { address: address.value });
         cartStore.clearCart();
         showToast('Order placed successfully!');
         router.push('/orders');
     } catch (err) {
-        showToast('Failed to place order');
+        showToast(err.response?.data?.message || 'Failed to place order');
     }
 };
 </script>
@@ -78,6 +85,16 @@ const checkout = async () => {
           <span>Total</span>
           <span>${{ cartStore.cartTotal }}</span>
         </div>
+
+        <div class="shipping-address">
+          <label>Shipping Address</label>
+          <textarea 
+            v-model="address" 
+            placeholder="Enter your full delivery address..."
+            class="address-input glass"
+          ></textarea>
+        </div>
+
         <button @click="checkout" class="btn btn-primary w-full">Proceed to Checkout</button>
       </div>
     </div>
@@ -204,7 +221,37 @@ const checkout = async () => {
 
 .w-full {
   width: 100%;
-  margin-top: 1.5rem;
+}
+
+.shipping-address {
+  margin-top: 2rem;
+}
+
+.shipping-address label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+  color: var(--text-main);
+}
+
+.address-input {
+  width: 100%;
+  height: 100px;
+  border-radius: 12px;
+  padding: 1rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: none;
+  outline: none;
+  background: rgba(255, 255, 255, 0.4);
+  transition: all 0.3s;
+}
+
+.address-input:focus {
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
 
 .empty-cart {
