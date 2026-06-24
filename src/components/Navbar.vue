@@ -31,7 +31,7 @@ const handleLogout = async () => {
     <div class="container nav-content">
       <RouterLink to="/" class="logo">
         <span class="logo-icon">Ecommerce </span>
-        <span class="logo-text"><span>Shop</span></span>
+        <span class="logo-text"><span>Shop</span> Web</span>
       </RouterLink>
 
       <div class="nav-middle">

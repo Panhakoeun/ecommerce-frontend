@@ -39,7 +39,7 @@ const addToCart = async (product) => {
 <template>
   <div class="container animate-fade-in">
     <section class="hero">
-      <h1>Welcome<span class="gradient-text">To Our</span>Shop </h1>
+      <h1>Welcome<span class="gradient-text">To Our</span> Shop </h1>
       <p>Choose the products what ever you want to buy </p>
     </section>
 
