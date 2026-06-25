@@ -60,7 +60,9 @@ const checkout = async () => {
           </div>
           <div class="item-details">
             <div class="item-info">
-              <h4>{{ item.product.name }}</h4>
+              <RouterLink :to="{ name: 'product-detail', params: { id: item.product_id || item.product.id } }">
+                <h4>{{ item.product.name }}</h4>
+              </RouterLink>
               <p class="item-price">${{ item.product.price }}</p>
             </div>
             <div class="item-actions">

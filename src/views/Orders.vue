@@ -60,7 +60,9 @@ const formatDate = (dateStr) => {
                 <img :src="getImageUrl(item.product.image)" alt="">
             </div>
             <div class="item-meta">
-              <span class="item-name">{{ item.product.name }}</span>
+              <RouterLink :to="{ name: 'product-detail', params: { id: item.product_id } }">
+                <span class="item-name">{{ item.product.name }}</span>
+              </RouterLink>
               <span class="item-qty">x{{ item.quantity }}</span>
             </div>
             <span class="item-price">${{ item.price }}</span>
