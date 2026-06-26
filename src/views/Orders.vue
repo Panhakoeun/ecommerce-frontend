@@ -77,6 +77,13 @@ const formatDate = (dateStr) => {
           <div class="total-info">
             <span>Total Amount</span>
             <span class="order-total">${{ order.total }}</span>
+            <RouterLink
+              v-if="order.status?.toLowerCase() === 'completed'"
+              :to="{ name: 'order-receipt', params: { id: order.id } }"
+              class="btn-receipt"
+            >
+              🧾 View Receipt
+            </RouterLink>
           </div>
         </div>
       </div>
@@ -231,6 +238,27 @@ const formatDate = (dateStr) => {
   font-size: 1.5rem;
   font-weight: 800;
   color: var(--primary);
+}
+
+.btn-receipt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+  padding: 0.45rem 1rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), #a855f7);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 0 3px 12px rgba(99, 102, 241, 0.3);
+}
+
+.btn-receipt:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
 }
 
 .empty-orders {

@@ -34,6 +34,7 @@ const addToCart = async (product) => {
         showToast(`${product.name} added to cart!`);
     }
 };
+
 </script>
 
 <template>

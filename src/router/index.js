@@ -36,6 +36,12 @@ const router = createRouter({
       name: 'orders',
       component: () => import('@/views/Orders.vue'),
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/orders/:id/receipt',
+      name: 'order-receipt',
+      component: () => import('@/views/OrderReceipt.vue'),
+      meta: { requiresAuth: true }
     }
   ]
 })
