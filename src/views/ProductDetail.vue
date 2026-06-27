@@ -206,7 +206,7 @@ const goBack = () => {
 
 <style scoped>
 .product-page {
-    padding-bottom: 5rem;
+    padding-bottom: 4rem;
 }
 
 .back-btn {
@@ -216,7 +216,7 @@ const goBack = () => {
     padding: 0.6rem 1.2rem;
     border-radius: 12px;
     font-weight: 600;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     color: var(--text-muted);
     font-size: 0.9rem;
 }
@@ -227,14 +227,14 @@ const goBack = () => {
 }
 
 .product-detail-layout {
-    max-width: 1200px;
+    max-width: 1080px;
     margin: 0 auto;
 }
 
 .product-grid-main {
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
-    gap: 3rem;
+    grid-template-columns: minmax(0, 520px) minmax(340px, 1fr);
+    gap: 2.5rem;
     align-items: start;
 }
 
@@ -247,14 +247,15 @@ const goBack = () => {
 .product-gallery {
     border-radius: 28px;
     overflow: hidden;
-    min-height: 420px;
-    aspect-ratio: 1 / 1;
+    min-height: 380px;
+    max-height: 500px;
+    aspect-ratio: 4 / 3;
     display: flex;
     align-items: center;
     justify-content: center;
     background: white;
     position: relative;
-    padding: 2rem;
+    padding: 1.75rem;
 }
 
 .badge-tag {
@@ -275,7 +276,7 @@ const goBack = () => {
 
 .product-gallery img {
     max-width: 100%;
-    max-height: 100%;
+    max-height: 92%;
     object-fit: contain;
     transition: transform 0.5s ease;
 }
@@ -287,7 +288,7 @@ const goBack = () => {
 /* ── Content ─────────────────────────── */
 .breadcrumb {
     font-size: 0.85rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     color: var(--text-muted);
     display: flex;
     align-items: center;
@@ -304,7 +305,7 @@ const goBack = () => {
 }
 
 .product-title {
-    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-size: clamp(2rem, 3.4vw, 3rem);
     font-weight: 900;
     margin-bottom: 1rem;
     line-height: 1.1;
@@ -316,7 +317,7 @@ const goBack = () => {
     display: flex;
     align-items: flex-start;
     gap: 0.2rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     color: var(--primary);
 }
 
@@ -327,7 +328,7 @@ const goBack = () => {
 }
 
 .amount {
-    font-size: 3rem;
+    font-size: 2.55rem;
     font-weight: 900;
 }
 
@@ -335,7 +336,7 @@ const goBack = () => {
     display: flex;
     flex-wrap: wrap;
     gap: 2rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.75rem;
 }
 
 .meta-item {
@@ -356,9 +357,9 @@ const goBack = () => {
 }
 
 .product-description {
-    padding: 1.5rem;
-    border-radius: 20px;
-    margin-bottom: 2.5rem;
+    padding: 1.25rem;
+    border-radius: 18px;
+    margin-bottom: 1.5rem;
 }
 
 .product-description h3 {
@@ -375,9 +376,9 @@ const goBack = () => {
 }
 
 .size-price-panel {
-    padding: 1.5rem;
-    border-radius: 20px;
-    margin-bottom: 2.5rem;
+    padding: 1.25rem;
+    border-radius: 18px;
+    margin-bottom: 1.5rem;
 }
 
 .size-price-panel h3 {
@@ -419,9 +420,9 @@ const goBack = () => {
 
 /* ── Purchase Box ────────────────────── */
 .purchase-box {
-    padding: 2rem;
-    border-radius: 24px;
-    margin-bottom: 2.5rem;
+    padding: 1.4rem;
+    border-radius: 20px;
+    margin-bottom: 1.75rem;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
@@ -466,9 +467,9 @@ const goBack = () => {
 
 .btn-lg {
     width: 100%;
-    height: 64px;
-    font-size: 1.2rem;
-    border-radius: 20px;
+    height: 54px;
+    font-size: 1rem;
+    border-radius: 16px;
 }
 
 .btn-lg:disabled {
@@ -515,7 +516,7 @@ const goBack = () => {
 
 /* ── Related ─────────────────────────── */
 .related-section {
-    margin-top: 6rem;
+    margin-top: 4rem;
 }
 
 .section-header {
@@ -539,12 +540,12 @@ const goBack = () => {
 .related-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 2rem;
+    gap: 1.25rem;
 }
 
 .rel-card {
-    padding: 1.2rem;
-    border-radius: 24px;
+    padding: 1rem;
+    border-radius: 18px;
     text-align: center;
 }
 
@@ -554,7 +555,7 @@ const goBack = () => {
 }
 
 .rel-img-wrapper {
-    height: 180px;
+    height: 140px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -580,14 +581,14 @@ const goBack = () => {
 /* ── Skeletons ────────────────────────── */
 .loader-layout {
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 4rem;
+    grid-template-columns: minmax(0, 520px) minmax(340px, 1fr);
+    gap: 2.5rem;
     margin-top: 2rem;
 }
 
 .skeleton-gallery {
-    height: 600px;
-    border-radius: 40px;
+    height: 420px;
+    border-radius: 28px;
     background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
@@ -658,7 +659,7 @@ const goBack = () => {
 
     .product-gallery {
         min-height: auto;
-        max-height: 520px;
+        max-height: 440px;
         aspect-ratio: 4 / 3;
     }
 

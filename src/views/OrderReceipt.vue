@@ -3,9 +3,11 @@ import { onMounted, ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/api/axios';
 import { getImageUrl } from '@/utils/image';
+import { useAuthStore } from '@/stores/auth';
 
 const route = useRoute();
 const router = useRouter();
+const auth = useAuthStore();
 
 const order = ref(null);
 const loading = ref(true);
@@ -41,6 +43,24 @@ const subtotal = computed(() => {
     if (!order.value?.items) return 0;
     return order.value.items.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0).toFixed(2);
 });
+
+const customerName = computed(() => (
+    order.value?.user?.name
+    || order.value?.customer?.name
+    || order.value?.user_name
+    || order.value?.name
+    || auth.user?.name
+    || 'Customer'
+));
+
+const customerEmail = computed(() => (
+    order.value?.user?.email
+    || order.value?.customer?.email
+    || order.value?.user_email
+    || order.value?.email
+    || auth.user?.email
+    || 'No email provided'
+));
 
 const printReceipt = () => window.print();
 </script>
@@ -108,6 +128,23 @@ const printReceipt = () => window.print();
         </div>
 
         <div class="divider dashed"></div>
+
+        <!-- Customer Details -->
+        <div class="section">
+          <h3 class="section-title">Customer Details</h3>
+          <div class="customer-card">
+            <div class="customer-field">
+              <span class="customer-label">Name</span>
+              <strong>{{ customerName }}</strong>
+            </div>
+            <div class="customer-field">
+              <span class="customer-label">Email</span>
+              <strong>{{ customerEmail }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
 
         <!-- Shipping Address -->
         <div class="section">
@@ -425,6 +462,34 @@ const printReceipt = () => window.print();
   padding-left: 1rem;
 }
 
+.customer-card {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.customer-field {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(99, 102, 241, 0.04);
+}
+
+.customer-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.customer-field strong {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
 /* Items table */
 .items-table {
   border-radius: 12px;
@@ -672,6 +737,10 @@ const printReceipt = () => window.print();
 
   .receipt-meta {
     gap: 1rem;
+  }
+
+  .customer-card {
+    grid-template-columns: 1fr;
   }
 }
 
