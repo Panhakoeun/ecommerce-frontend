@@ -164,6 +164,7 @@ const closeMenu = () => {
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  min-width: 0;
 }
 
 .logo {
@@ -172,7 +173,7 @@ const closeMenu = () => {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   flex-shrink: 0;
 }
 
@@ -193,6 +194,7 @@ const closeMenu = () => {
   flex: 1;
   max-width: 500px;
   margin: 0 2rem;
+  min-width: 180px;
 }
 
 .search-box {
@@ -476,13 +478,40 @@ const closeMenu = () => {
 
 /* ── Responsive Breakpoints ──────────────────── */
 @media (max-width: 1024px) {
+  .navbar {
+    width: calc(100% - 1.25rem);
+  }
+
   .nav-middle {
-    max-width: 300px;
-    margin: 0 1rem;
+    max-width: 260px;
+    margin: 0 0.75rem;
+  }
+
+  .nav-links {
+    gap: 0.5rem;
+  }
+
+  .nav-link {
+    padding: 0.45rem 0.55rem;
+    font-size: 0.88rem;
   }
 
   .user-name {
     display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .nav-middle {
+    max-width: 220px;
+  }
+
+  .logo {
+    font-size: 1.15rem;
+  }
+
+  .logo-icon {
+    font-size: 1.3rem;
   }
 }
 
@@ -523,11 +552,34 @@ const closeMenu = () => {
 }
 
 @media (max-width: 480px) {
+  .navbar {
+    border-radius: 16px;
+    padding: 0.65rem 0.75rem;
+  }
+
   .logo-icon {
     font-size: 1.2rem;
   }
+
   .logo {
     font-size: 1.1rem;
+    gap: 0.35rem;
+  }
+
+  .icon-btn,
+  .hamburger {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+@media (max-width: 380px) {
+  .logo-text {
+    display: none;
+  }
+
+  .mobile-actions {
+    gap: 0.35rem;
   }
 }
 </style>

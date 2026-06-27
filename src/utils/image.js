@@ -3,8 +3,8 @@ import { BASE_URL } from '@/api/axios';
 export const getImageUrl = (path) => {
     if (!path) return 'https://via.placeholder.com/600x400?text=No+Image';
     
-    // If it's already a full URL, return it
-    if (path.startsWith('http')) return path;
+    // If it's already a browser-ready URL, return it
+    if (path.startsWith('http') || path.startsWith('data:') || path.startsWith('blob:')) return path;
     
     // Handle Laravel storage path
     // Usually images are in storage/ (which maps to public/storage/)

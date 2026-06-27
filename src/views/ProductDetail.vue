@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, inject, watch } from 'vue';
+import { computed, onMounted, ref, inject, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useProductStore } from '@/stores/products';
 import { useCartStore } from '@/stores/cart';
@@ -16,10 +16,17 @@ const showToast = inject('showToast');
 const product = ref(null);
 const loading = ref(true);
 const quantity = ref(1);
+const sizes = ['S', 'M', 'L'];
+const selectedSize = ref('S');
+
+const formatPrice = (value) => Number(value || 0).toFixed(2);
+const selectedPrice = computed(() => product.value?.size_prices?.[selectedSize.value] ?? product.value?.price ?? 0);
 
 const loadProductData = async (id) => {
     loading.value = true;
     product.value = await productStore.getProduct(id);
+    selectedSize.value = 'S';
+    quantity.value = 1;
     if (product.value) {
         // Fetch related products (e.g. same category)
         if (product.value.category_id) {
@@ -48,9 +55,9 @@ const addToCart = async () => {
         router.push('/login');
         return;
     }
-    const success = await cartStore.addToCart(product.value.id, quantity.value);
+    const success = await cartStore.addToCart(product.value.id, quantity.value, selectedSize.value);
     if (success) {
-        showToast(`${product.value.name} added to cart!`);
+        showToast(`${product.value.name} (${selectedSize.value}) added to cart!`);
     }
 };
 
@@ -105,13 +112,13 @@ const goBack = () => {
             <h1 class="product-title">{{ product.name }}</h1>
             <div class="pricing-badge">
                 <span class="currency">$</span>
-                <span class="amount">{{ product.price }}</span>
+                <span class="amount">{{ formatPrice(selectedPrice) }}</span>
             </div>
             
             <div class="product-meta">
-                <div class="meta-item">
+                <div class="meta-item" :class="{ warning: product.stock <= product.low_stock_threshold }">
                     <span class="icon">📦</span>
-                    <span>In Stock</span>
+                    <span>{{ product.stock > 0 ? `${product.stock} in stock` : 'Sold out' }}</span>
                 </div>
                 <div class="meta-item">
                     <span class="icon">⭐</span>
@@ -124,6 +131,23 @@ const goBack = () => {
                 <p>{{ product.description }}</p>
             </div>
 
+            <div v-if="product.size_prices" class="size-price-panel glass">
+                <h3>Choose Size</h3>
+                <div class="size-price-grid">
+                    <button
+                        v-for="size in sizes"
+                        :key="size"
+                        type="button"
+                        class="size-price-item"
+                        :class="{ active: selectedSize === size }"
+                        @click="selectedSize = size"
+                    >
+                        <span class="size-label">{{ size }}</span>
+                        <strong>${{ formatPrice(product.size_prices[size]) }}</strong>
+                    </button>
+                </div>
+            </div>
+
             <div class="purchase-box glass-premium">
                 <div class="controls-row">
                     <div class="quantity-selector glass">
@@ -132,7 +156,7 @@ const goBack = () => {
                         <button @click="quantity++" class="qty-btn" aria-label="Increase quantity">+</button>
                     </div>
                 </div>
-                <button @click="addToCart" class="btn btn-primary btn-lg" :disabled="cartStore.loading">
+                <button @click="addToCart" class="btn btn-primary btn-lg" :disabled="cartStore.loading || product.stock <= 0">
                     <span v-if="!cartStore.loading">Add to Cart</span>
                     <span v-else>Adding...</span>
                 </button>
@@ -171,7 +195,7 @@ const goBack = () => {
                         <img :src="getImageUrl(rel.image || rel.image_url)" :alt="rel.name">
                     </div>
                     <h4>{{ rel.name }}</h4>
-                    <p class="rel-price">${{ rel.price }}</p>
+                    <p class="rel-price">${{ formatPrice(rel.price) }}</p>
                 </RouterLink>
             </div>
         </div>
@@ -209,8 +233,8 @@ const goBack = () => {
 
 .product-grid-main {
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 4rem;
+    grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+    gap: 3rem;
     align-items: start;
 }
 
@@ -221,9 +245,10 @@ const goBack = () => {
 }
 
 .product-gallery {
-    border-radius: 40px;
+    border-radius: 28px;
     overflow: hidden;
-    height: 650px;
+    min-height: 420px;
+    aspect-ratio: 1 / 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -279,11 +304,11 @@ const goBack = () => {
 }
 
 .product-title {
-    font-size: 3.5rem;
+    font-size: clamp(2rem, 4vw, 3.5rem);
     font-weight: 900;
     margin-bottom: 1rem;
     line-height: 1.1;
-    letter-spacing: -2px;
+    letter-spacing: 0;
     color: var(--text-main);
 }
 
@@ -308,6 +333,7 @@ const goBack = () => {
 
 .product-meta {
     display: flex;
+    flex-wrap: wrap;
     gap: 2rem;
     margin-bottom: 2.5rem;
 }
@@ -319,6 +345,10 @@ const goBack = () => {
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-muted);
+}
+
+.meta-item.warning {
+    color: #be123c;
 }
 
 .meta-item .icon {
@@ -342,6 +372,49 @@ const goBack = () => {
 .product-description p {
     color: var(--text-muted);
     line-height: 1.8;
+}
+
+.size-price-panel {
+    padding: 1.5rem;
+    border-radius: 20px;
+    margin-bottom: 2.5rem;
+}
+
+.size-price-panel h3 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-main);
+}
+
+.size-price-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+
+.size-price-item {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 0.85rem;
+    background: white;
+    text-align: left;
+}
+
+.size-price-item:hover,
+.size-price-item.active {
+    border-color: var(--primary);
+    background: rgba(99, 102, 241, 0.08);
+    color: var(--primary);
+}
+
+.size-label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
 }
 
 /* ── Purchase Box ────────────────────── */
@@ -396,6 +469,12 @@ const goBack = () => {
     height: 64px;
     font-size: 1.2rem;
     border-radius: 20px;
+}
+
+.btn-lg:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
 }
 
 /* ── Perks ──────────────────────────── */
@@ -459,7 +538,7 @@ const goBack = () => {
 
 .related-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 2rem;
 }
 
@@ -565,7 +644,12 @@ const goBack = () => {
 @media (max-width: 1024px) {
     .product-grid-main {
         grid-template-columns: 1fr;
-        gap: 3rem;
+        gap: 2rem;
+    }
+
+    .loader-layout {
+        grid-template-columns: 1fr;
+        gap: 2rem;
     }
     
     .product-gallery-container {
@@ -573,11 +657,9 @@ const goBack = () => {
     }
 
     .product-gallery {
-        height: 500px;
-    }
-
-    .product-title {
-        font-size: 2.5rem;
+        min-height: auto;
+        max-height: 520px;
+        aspect-ratio: 4 / 3;
     }
 
     .related-grid {
@@ -585,20 +667,95 @@ const goBack = () => {
     }
 }
 
-@media (max-width: 480px) {
-    .product-gallery {
-        height: 350px;
+@media (max-width: 768px) {
+    .product-page {
+        padding-bottom: 3rem;
     }
 
-    .product-title {
-        font-size: 2rem;
+    .back-btn {
+        margin-bottom: 1.25rem;
+    }
+
+    .product-gallery {
+        border-radius: 22px;
+        padding: 1.25rem;
+    }
+
+    .badge-tag {
+        top: 1rem;
+        left: 1rem;
+    }
+
+    .pricing-badge,
+    .product-meta,
+    .product-description,
+    .size-price-panel,
+    .purchase-box {
+        margin-bottom: 1.5rem;
+    }
+
+    .purchase-box,
+    .product-description,
+    .size-price-panel {
+        padding: 1.25rem;
+    }
+
+    .related-section {
+        margin-top: 3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .skeleton-gallery {
+        height: 320px;
+    }
+
+    .skeleton-line.title {
+        height: 44px;
+        width: 100%;
+    }
+
+    .product-gallery {
+        aspect-ratio: 1 / 1;
+    }
+
+    .product-meta {
+        gap: 0.75rem 1.25rem;
     }
 
     .amount {
-        font-size: 2.5rem;
+        font-size: 2.35rem;
+    }
+
+    .currency {
+        font-size: 1.2rem;
+    }
+
+    .size-price-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.5rem;
+    }
+
+    .size-price-item {
+        padding: 0.75rem 0.55rem;
+        text-align: center;
     }
 
     .product-perks {
+        grid-template-columns: 1fr;
+    }
+
+    .related-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-title {
+        font-size: 1.7rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .size-price-grid {
         grid-template-columns: 1fr;
     }
 }

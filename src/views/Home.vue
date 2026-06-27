@@ -24,14 +24,14 @@ const filterByCategory = async (categoryId) => {
     await productStore.fetchProducts(categoryId ? { category_id: categoryId } : {});
 };
 
-const addToCart = async (product) => {
+const addToCart = async (product, size = 'S') => {
     if (!authStore.isAuthenticated) {
         router.push('/login');
         return;
     }
-    const success = await cartStore.addToCart(product.id);
+    const success = await cartStore.addToCart(product.id, 1, size);
     if (success) {
-        showToast(`${product.name} added to cart!`);
+        showToast(`${product.name} (${size}) added to cart!`);
     }
 };
 
@@ -89,7 +89,7 @@ const addToCart = async (product) => {
 <style scoped>
 .hero {
   text-align: center;
-  padding: 6rem 0;
+  padding: 5rem 0 4rem;
   position: relative;
 }
 
@@ -107,10 +107,10 @@ const addToCart = async (product) => {
 }
 
 .hero h1 {
-  font-size: 4rem;
+  font-size: clamp(2.25rem, 6vw, 4rem);
   font-weight: 900;
   margin-bottom: 1.5rem;
-  letter-spacing: -2px;
+  letter-spacing: 0;
   line-height: 1.1;
 }
 
@@ -123,33 +123,40 @@ const addToCart = async (product) => {
 
 .hero p {
   color: var(--text-muted);
-  font-size: 1.4rem;
+  font-size: clamp(1rem, 2.2vw, 1.4rem);
   max-width: 600px;
   margin: 0 auto;
   font-weight: 500;
 }
 
+@media (max-width: 1024px) {
+  .grid-container,
+  .loader-container {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .hero {
-    padding: 4rem 0 3rem;
-  }
-
-  .hero h1 {
-    font-size: 2.5rem;
-    letter-spacing: -1px;
-  }
-
-  .hero p {
-    font-size: 1.1rem;
+    padding: 3rem 0 2.5rem;
   }
 
   .category-tabs {
     max-width: 100%;
     top: 80px;
+    margin-bottom: 2rem;
+    justify-content: flex-start;
   }
 
   .tabs-container {
     gap: 0.3rem;
+    width: 100%;
+    scrollbar-width: none;
+  }
+
+  .tabs-container::-webkit-scrollbar {
+    display: none;
   }
 
   .tab-btn {
@@ -159,21 +166,23 @@ const addToCart = async (product) => {
 }
 
 @media (max-width: 480px) {
-  .hero h1 {
-    font-size: 2rem;
+  .hero {
+    padding: 2rem 0 2rem;
   }
 
-  .hero p {
-    font-size: 1rem;
+  .category-tabs {
+    border-radius: 16px;
+    padding: 0.4rem;
+    top: 76px;
   }
 
   .grid-container {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 1rem;
   }
 
   .loader-container {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 1rem;
   }
 }
@@ -224,14 +233,14 @@ const addToCart = async (product) => {
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 2rem;
   width: 100%;
 }
 
 .loader-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 2rem;
 }
 

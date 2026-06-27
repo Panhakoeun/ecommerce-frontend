@@ -1,8 +1,9 @@
 <script setup>
+import { computed, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { getImageUrl } from '@/utils/image';
 
-defineProps({
+const props = defineProps({
     product: {
         type: Object,
         required: true
@@ -10,6 +11,13 @@ defineProps({
 });
 
 defineEmits(['add-to-cart']);
+
+const sizes = ['S', 'M', 'L'];
+const selectedSize = ref('S');
+
+const formatPrice = (value) => Number(value || 0).toFixed(2);
+
+const selectedPrice = computed(() => props.product.size_prices?.[selectedSize.value] ?? props.product.price);
 </script>
 
 <template>
@@ -40,13 +48,35 @@ defineEmits(['add-to-cart']);
       </div>
       
       <p class="description">{{ product.description?.substring(0, 50) }}...</p>
+
+      <div v-if="product.size_prices" class="size-prices" aria-label="Choose product size">
+        <button
+          v-for="size in sizes"
+          :key="size"
+          type="button"
+          class="size-pill"
+          :class="{ active: selectedSize === size }"
+          @click="selectedSize = size"
+        >
+          {{ size }} ${{ formatPrice(product.size_prices[size]) }}
+        </button>
+      </div>
       
       <div class="product-footer">
         <div class="price-box">
+          <span class="from-label">From</span>
           <span class="currency">$</span>
-          <span class="price-val">{{ product.price }}</span>
+          <span class="price-val">{{ formatPrice(selectedPrice) }}</span>
         </div>
-        <button @click="$emit('add-to-cart', product)" class="btn-add" title="Add to cart">
+        <span class="stock-badge" :class="{ low: product.stock <= product.low_stock_threshold }">
+          {{ product.stock > 0 ? `${product.stock} left` : 'Sold out' }}
+        </span>
+        <button
+          @click="$emit('add-to-cart', product, selectedSize)"
+          class="btn-add"
+          title="Add to cart"
+          :disabled="product.stock <= 0"
+        >
           <span class="btn-inner">
             <span class="plus">+</span>
           </span>
@@ -58,7 +88,7 @@ defineEmits(['add-to-cart']);
 
 <style scoped>
 .product-card {
-  border-radius: 32px;
+  border-radius: 24px;
   overflow: hidden;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
@@ -69,7 +99,7 @@ defineEmits(['add-to-cart']);
 }
 
 .product-card:hover {
-  transform: translateY(-12px);
+  transform: translateY(-8px);
   box-shadow: var(--shadow-xl);
   border-color: var(--primary);
   background: white;
@@ -78,10 +108,10 @@ defineEmits(['add-to-cart']);
 /* ── Image Section ───────────────────── */
 .image-wrapper {
   position: relative;
-  height: 280px;
+  height: clamp(210px, 24vw, 280px);
   background: white;
   margin: 0.75rem;
-  border-radius: 26px;
+  border-radius: 20px;
   overflow: hidden;
 }
 
@@ -182,8 +212,32 @@ defineEmits(['add-to-cart']);
 .description {
   font-size: 0.9rem;
   color: var(--text-muted);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   line-height: 1.5;
+}
+
+.size-prices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.size-pill {
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--primary);
+  border: 1px solid rgba(99, 102, 241, 0.12);
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.3rem 0.5rem;
+}
+
+.size-pill:hover,
+.size-pill.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
 }
 
 .product-footer {
@@ -191,12 +245,24 @@ defineEmits(['add-to-cart']);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .price-box {
   display: flex;
   align-items: flex-start;
   gap: 1px;
+  flex-wrap: wrap;
+  min-width: 90px;
+}
+
+.from-label {
+  width: 100%;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .currency {
@@ -210,10 +276,25 @@ defineEmits(['add-to-cart']);
   font-weight: 900;
   font-size: 1.6rem;
   color: var(--text-main);
-  letter-spacing: -1px;
+  letter-spacing: 0;
 }
 
 /* ── Add Button ──────────────────────── */
+.stock-badge {
+  color: #0f766e;
+  background: #ccfbf1;
+  border-radius: 999px;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.stock-badge.low {
+  color: #be123c;
+  background: #ffe4e6;
+}
+
 .btn-add {
   width: 52px;
   height: 52px;
@@ -228,12 +309,19 @@ defineEmits(['add-to-cart']);
   box-shadow: 0 8px 16px rgba(99, 102, 241, 0.25);
   border: none;
   padding: 0;
+  flex: 0 0 auto;
 }
 
 .btn-add:hover {
   transform: scale(1.1) rotate(90deg);
   background: var(--primary-hover);
   box-shadow: 0 10px 20px rgba(99, 102, 241, 0.35);
+}
+
+.btn-add:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transform: none;
 }
 
 .plus {
@@ -245,15 +333,53 @@ defineEmits(['add-to-cart']);
 /* ── Responsive ──────────────────────── */
 @media (max-width: 480px) {
   .image-wrapper {
-    height: 220px;
+    height: 210px;
+    margin: 0.6rem;
   }
   
   .product-info {
-    padding: 0 1.25rem 1.25rem 1.25rem;
+    padding: 0 1rem 1rem 1rem;
   }
 
   .title-row h4 {
     font-size: 1.1rem;
+  }
+
+  .size-prices {
+    gap: 0.35rem;
+  }
+
+  .size-pill {
+    flex: 1 1 calc(33.333% - 0.35rem);
+    min-width: 0;
+    padding: 0.45rem 0.25rem;
+    text-align: center;
+  }
+
+  .product-footer {
+    align-items: flex-end;
+  }
+
+  .stock-badge {
+    order: 3;
+    width: 100%;
+    text-align: center;
+  }
+
+  .btn-add {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .product-footer {
+    gap: 0.5rem;
+  }
+
+  .price-val {
+    font-size: 1.35rem;
   }
 }
 </style>

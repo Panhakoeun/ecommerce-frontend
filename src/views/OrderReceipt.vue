@@ -481,6 +481,7 @@ const printReceipt = () => window.print();
 .product-name {
   font-weight: 600;
   font-size: 0.9rem;
+  overflow-wrap: anywhere;
 }
 
 .qty-cell,
@@ -607,8 +608,13 @@ const printReceipt = () => window.print();
 
 /* Responsive */
 @media (max-width: 640px) {
+  .receipt-page {
+    padding: 1rem 0;
+  }
+
   .receipt-card {
-    padding: 1.5rem;
+    padding: 1.25rem;
+    border-radius: 20px;
   }
 
   .actions-bar {
@@ -624,8 +630,36 @@ const printReceipt = () => window.print();
 
   .table-header,
   .table-row {
-    grid-template-columns: 1fr 50px 80px 80px;
-    font-size: 0.78rem;
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+  }
+
+  .table-header {
+    display: none;
+  }
+
+  .table-row {
+    padding: 1rem;
+  }
+
+  .product-cell {
+    align-items: flex-start;
+  }
+
+  .qty-cell::before {
+    content: 'Qty: ';
+    color: var(--text-muted);
+  }
+
+  .price-cell::before {
+    content: 'Unit Price: ';
+    color: var(--text-muted);
+  }
+
+  .subtotal-cell::before {
+    content: 'Subtotal: ';
+    color: var(--text-muted);
   }
 
   .total-row {
@@ -638,6 +672,18 @@ const printReceipt = () => window.print();
 
   .receipt-meta {
     gap: 1rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .receipt-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .thank-you-banner {
+    padding: 1.5rem 0.75rem;
   }
 }
 </style>

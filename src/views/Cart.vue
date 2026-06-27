@@ -11,6 +11,24 @@ const showToast = inject('showToast');
 
 const address = ref('');
 
+const formatPrice = (value) => Number(value || 0).toFixed(2);
+
+const sizePrices = (item) => {
+    const prices = item.product?.size_prices;
+    if (!prices) return {};
+    if (typeof prices === 'string') {
+        try {
+            return JSON.parse(prices);
+        } catch {
+            return {};
+        }
+    }
+
+    return prices;
+};
+
+const itemPrice = (item) => item.price ?? sizePrices(item)[item.size] ?? item.product?.price ?? 0;
+
 onMounted(async () => {
     await cartStore.fetchCart();
 });
@@ -63,7 +81,8 @@ const checkout = async () => {
               <RouterLink :to="{ name: 'product-detail', params: { id: item.product_id || item.product.id } }">
                 <h4>{{ item.product.name }}</h4>
               </RouterLink>
-              <p class="item-price">${{ item.product.price }}</p>
+              <p class="item-price">${{ formatPrice(itemPrice(item)) }}</p>
+              <p v-if="item.size" class="item-size">Size: {{ item.size }}</p>
             </div>
             <div class="item-actions">
               <span class="qty">Qty: {{ item.quantity }}</span>
@@ -110,7 +129,7 @@ const checkout = async () => {
 }
 
 .cart-header h1 {
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 5vw, 2.5rem);
   font-weight: 800;
 }
 
@@ -123,7 +142,7 @@ const checkout = async () => {
 
 .cart-layout {
   display: grid;
-  grid-template-columns: 1fr 350px;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 350px);
   gap: 2rem;
   align-items: start;
 }
@@ -144,6 +163,7 @@ const checkout = async () => {
 .item-img {
   width: 100px;
   height: 100px;
+  flex: 0 0 100px;
   border-radius: 12px;
   overflow: hidden;
   background: #f1f5f9;
@@ -159,16 +179,26 @@ const checkout = async () => {
   flex: 1;
   display: flex;
   justify-content: space-between;
+  gap: 1rem;
+  min-width: 0;
 }
 
 .item-info h4 {
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
+  overflow-wrap: anywhere;
 }
 
 .item-price {
   font-weight: 700;
   color: var(--primary);
+}
+
+.item-size {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
 }
 
 .item-actions {
@@ -280,6 +310,57 @@ const checkout = async () => {
 @media (max-width: 900px) {
   .cart-layout {
     grid-template-columns: 1fr;
+  }
+
+  .cart-summary {
+    position: static;
+  }
+}
+
+@media (max-width: 600px) {
+  .cart-header {
+    margin-bottom: 2rem;
+  }
+
+  .cart-item {
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 16px;
+  }
+
+  .item-img {
+    width: 82px;
+    height: 82px;
+    flex-basis: 82px;
+  }
+
+  .item-details {
+    flex-direction: column;
+  }
+
+  .item-actions {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .cart-summary {
+    padding: 1.25rem;
+  }
+
+  .empty-cart {
+    padding: 3rem 1rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .cart-item {
+    flex-direction: column;
+  }
+
+  .item-img {
+    width: 100%;
+    height: 170px;
+    flex-basis: auto;
   }
 }
 </style>

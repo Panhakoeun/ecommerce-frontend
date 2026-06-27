@@ -153,4 +153,20 @@ const handleSubmit = async () => {
   color: var(--primary);
   font-weight: 700;
 }
+
+@media (max-width: 520px) {
+  .flex-center {
+    align-items: flex-start;
+    min-height: auto;
+  }
+
+  .auth-card {
+    padding: 2rem 1.25rem;
+    border-radius: 20px;
+  }
+
+  .auth-header h2 {
+    font-size: 1.6rem;
+  }
+}
 </style>

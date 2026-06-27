@@ -71,4 +71,22 @@ onMounted(() => {
   opacity: 0;
   transform: translateY(10px);
 }
+
+@media (max-width: 768px) {
+  .main-content {
+    padding-top: 105px;
+  }
+
+  .footer {
+    padding: 2rem 0;
+    margin-top: 2.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding-top: 96px;
+  }
+}
 </style>

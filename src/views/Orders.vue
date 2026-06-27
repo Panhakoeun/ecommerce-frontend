@@ -98,7 +98,7 @@ const formatDate = (dateStr) => {
 }
 
 .orders-header h1 {
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 5vw, 2.5rem);
 }
 
 .gradient-text {
@@ -203,6 +203,7 @@ const formatDate = (dateStr) => {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  gap: 1.5rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--border);
 }
@@ -265,5 +266,59 @@ const formatDate = (dateStr) => {
   text-align: center;
   padding: 5rem;
   border-radius: 30px;
+}
+
+@media (max-width: 640px) {
+  .orders-header {
+    margin-bottom: 2rem;
+  }
+
+  .order-card {
+    padding: 1.25rem;
+    border-radius: 18px;
+  }
+
+  .order-info,
+  .order-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .shipping-info {
+    max-width: 100%;
+  }
+
+  .total-info {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .btn-receipt {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .order-item {
+    align-items: flex-start;
+  }
+
+  .item-price {
+    white-space: nowrap;
+  }
+
+  .empty-orders {
+    padding: 3rem 1rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .order-item {
+    flex-wrap: wrap;
+  }
+
+  .item-price {
+    width: 100%;
+    padding-left: 66px;
+  }
 }
 </style>

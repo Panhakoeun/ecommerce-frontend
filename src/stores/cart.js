@@ -1,6 +1,25 @@
 import { defineStore } from 'pinia';
 import api from '@/api/axios';
 
+const normalizeSizePrices = (sizePrices) => {
+    if (!sizePrices) return {};
+    if (typeof sizePrices === 'string') {
+        try {
+            return JSON.parse(sizePrices);
+        } catch {
+            return {};
+        }
+    }
+
+    return sizePrices;
+};
+
+const linePrice = (item) => {
+    const sizePrices = normalizeSizePrices(item.product?.size_prices);
+
+    return Number(item.price ?? sizePrices[item.size] ?? item.product?.price ?? 0);
+};
+
 export const useCartStore = defineStore('cart', {
     state: () => ({
         items: [],
@@ -10,7 +29,9 @@ export const useCartStore = defineStore('cart', {
 
     getters: {
         cartCount: (state) => state.items.length,
-        cartTotal: (state) => state.items.reduce((total, item) => total + (item.product.price * item.quantity), 0)
+        cartTotal: (state) => state.items
+            .reduce((total, item) => total + (linePrice(item) * item.quantity), 0)
+            .toFixed(2)
     },
 
     actions: {
@@ -26,9 +47,9 @@ export const useCartStore = defineStore('cart', {
             }
         },
 
-        async addToCart(productId, quantity = 1) {
+        async addToCart(productId, quantity = 1, size = 'S') {
             try {
-                await api.post('/cart', { product_id: productId, quantity });
+                await api.post('/cart', { product_id: productId, quantity, size });
                 await this.fetchCart();
                 return true;
             } catch (err) {
