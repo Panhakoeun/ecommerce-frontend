@@ -30,12 +30,12 @@ const selectedPrice = computed(() => props.product.size_prices?.[selectedSize.va
       </RouterLink>
       
       <!-- Quick View Toggle / Badge -->
-      <div class="category-chip">{{ product.category?.name || 'New' }}</div>
+      <div class="category-chip">{{ product.category?.name || $t('common.new') }}</div>
       
       <!-- Hover Overlay -->
       <div class="card-overlay">
         <RouterLink :to="{ name: 'product-detail', params: { id: product.id } }" class="btn-detail">
-          View Details
+          {{ $t('common.viewDetails') }}
         </RouterLink>
       </div>
     </div>
@@ -64,12 +64,12 @@ const selectedPrice = computed(() => props.product.size_prices?.[selectedSize.va
       
       <div class="product-footer">
         <div class="price-box">
-          <span class="from-label">From</span>
+          <span class="from-label">{{ $t('common.from') }}</span>
           <span class="currency">$</span>
           <span class="price-val">{{ formatPrice(selectedPrice) }}</span>
         </div>
         <span class="stock-badge" :class="{ low: product.stock <= product.low_stock_threshold }">
-          {{ product.stock > 0 ? `${product.stock} left` : 'Sold out' }}
+          {{ product.stock > 0 ? `${product.stock} ${$t('common.left')}` : $t('common.soldOut') }}
         </span>
         <button
           @click="$emit('add-to-cart', product, selectedSize)"

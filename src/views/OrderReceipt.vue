@@ -4,10 +4,12 @@ import { useRoute, useRouter } from 'vue-router';
 import api from '@/api/axios';
 import { getImageUrl } from '@/utils/image';
 import { useAuthStore } from '@/stores/auth';
+import { useI18n } from 'vue-i18n';
 
 const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
+const { t } = useI18n();
 
 const order = ref(null);
 const loading = ref(true);
@@ -23,7 +25,7 @@ onMounted(async () => {
             router.push('/orders');
         }
     } catch (err) {
-        error.value = 'Unable to load receipt. The order may not exist.';
+        error.value = t('receipt.error');
     } finally {
         loading.value = false;
     }
@@ -70,23 +72,23 @@ const printReceipt = () => window.print();
 
     <div v-if="loading" class="loader-wrap">
       <div class="spinner"></div>
-      <p>Loading receipt...</p>
+      <p>{{ $t('receipt.loading') }}</p>
     </div>
 
     <div v-else-if="error" class="error-wrap glass">
       <div class="error-icon">❌</div>
       <h3>{{ error }}</h3>
-      <RouterLink to="/orders" class="btn btn-primary">Back to Orders</RouterLink>
+      <RouterLink to="/orders" class="btn btn-primary">{{ $t('receipt.backToOrders') }}</RouterLink>
     </div>
 
     <div v-else-if="order" class="receipt-wrapper">
       <!-- Actions bar (hidden on print) -->
       <div class="actions-bar no-print">
         <RouterLink to="/orders" class="btn btn-back">
-          <span>←</span> Back to Orders
+          <span>←</span> {{ $t('receipt.backToOrders') }}
         </RouterLink>
         <button @click="printReceipt" class="btn btn-print">
-          🖨️ Print Receipt
+          🖨️ {{ $t('receipt.printReceipt') }}
         </button>
       </div>
 
@@ -101,28 +103,28 @@ const printReceipt = () => window.print();
           </div>
           <div class="receipt-badge">
             <span class="checkmark">✓</span>
-            <span>Order Completed</span>
+            <span>{{ $t('receipt.orderCompleted') }}</span>
           </div>
         </div>
 
         <!-- Thank You Banner -->
         <div class="thank-you-banner">
-          <h1>Thank you for your purchase!</h1>
-          <p>Your order has been successfully completed and delivered.</p>
+          <h1>{{ $t('receipt.thanksTitle') }}</h1>
+          <p>{{ $t('receipt.thanksDesc') }}</p>
         </div>
 
         <!-- Order Details -->
         <div class="receipt-meta">
           <div class="meta-item">
-            <span class="meta-label">Receipt No.</span>
+            <span class="meta-label">{{ $t('receipt.receiptNo') }}</span>
             <span class="meta-value">#{{ order.id }}</span>
           </div>
           <div class="meta-item">
-            <span class="meta-label">Date</span>
+            <span class="meta-label">{{ $t('receipt.date') }}</span>
             <span class="meta-value">{{ formatDate(order.created_at) }}</span>
           </div>
           <div class="meta-item">
-            <span class="meta-label">Status</span>
+            <span class="meta-label">{{ $t('receipt.status') }}</span>
             <span class="meta-value status-badge">{{ order.status }}</span>
           </div>
         </div>
@@ -131,14 +133,14 @@ const printReceipt = () => window.print();
 
         <!-- Customer Details -->
         <div class="section">
-          <h3 class="section-title">Customer Details</h3>
+          <h3 class="section-title">{{ $t('receipt.customerDetails') }}</h3>
           <div class="customer-card">
             <div class="customer-field">
-              <span class="customer-label">Name</span>
+              <span class="customer-label">{{ $t('receipt.name') }}</span>
               <strong>{{ customerName }}</strong>
             </div>
             <div class="customer-field">
-              <span class="customer-label">Email</span>
+              <span class="customer-label">{{ $t('receipt.email') }}</span>
               <strong>{{ customerEmail }}</strong>
             </div>
           </div>
@@ -148,7 +150,7 @@ const printReceipt = () => window.print();
 
         <!-- Shipping Address -->
         <div class="section">
-          <h3 class="section-title">📍 Delivered To</h3>
+          <h3 class="section-title">📍 {{ $t('receipt.deliveredTo') }}</h3>
           <p class="address-text">{{ order.address }}</p>
         </div>
 
@@ -156,13 +158,13 @@ const printReceipt = () => window.print();
 
         <!-- Items Table -->
         <div class="section">
-          <h3 class="section-title">🛒 Items Ordered</h3>
+          <h3 class="section-title">🛒 {{ $t('receipt.itemsOrdered') }}</h3>
           <div class="items-table">
             <div class="table-header">
-              <span>Product</span>
-              <span>Qty</span>
-              <span>Unit Price</span>
-              <span>Subtotal</span>
+              <span>{{ $t('receipt.product') }}</span>
+              <span>{{ $t('receipt.qty') }}</span>
+              <span>{{ $t('receipt.unitPrice') }}</span>
+              <span>{{ $t('receipt.subtotal') }}</span>
             </div>
             <div
               v-for="item in order.items"
@@ -187,15 +189,15 @@ const printReceipt = () => window.print();
         <!-- Totals -->
         <div class="totals-section">
           <div class="total-row">
-            <span>Subtotal</span>
+            <span>{{ $t('cart.subtotal') }}</span>
             <span>${{ subtotal }}</span>
           </div>
           <div class="total-row">
-            <span>Shipping</span>
-            <span class="free-text">FREE</span>
+            <span>{{ $t('cart.shipping') }}</span>
+            <span class="free-text">{{ $t('cart.free') }}</span>
           </div>
           <div class="total-row grand-total">
-            <span>Total Paid</span>
+            <span>{{ $t('receipt.totalPaid') }}</span>
             <span class="grand-amount">${{ parseFloat(order.total).toFixed(2) }}</span>
           </div>
         </div>
@@ -204,8 +206,8 @@ const printReceipt = () => window.print();
 
         <!-- Footer -->
         <div class="receipt-footer">
-          <p>🎉 Thank you for shopping with <strong>ShopVue</strong>!</p>
-          <p class="footer-sub">Keep this receipt for your records.</p>
+          <p>🎉 {{ $t('receipt.thanksShopping') }} <strong>ShopVue</strong>!</p>
+          <p class="footer-sub">{{ $t('receipt.keepReceipt') }}</p>
           <div class="barcode-placeholder no-print">
             <div class="barcode-lines">
               <span v-for="n in 30" :key="n" :style="{ height: (Math.random() * 20 + 10) + 'px' }"></span>

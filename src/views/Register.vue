@@ -34,64 +34,64 @@ const handleSubmit = async () => {
   <div class="container flex-center">
     <div class="auth-card glass animate-fade-in">
       <div class="auth-header">
-        <h2>Join Us</h2>
-        <p>Create an account to start shopping</p>
+        <h2>{{ $t('register.joinUs') }}</h2>
+        <p>{{ $t('register.createAccount') }}</p>
       </div>
 
       <form @submit.prevent="handleSubmit" class="auth-form">
         <div v-if="error" class="error-alert">{{ error }}</div>
 
         <div class="form-group">
-          <label class="form-label">Full Name</label>
+          <label class="form-label">{{ $t('register.fullName') }}</label>
           <input 
             v-model="form.name" 
             type="text" 
             class="form-input" 
-            placeholder="John Doe"
+            :placeholder="$t('register.namePlaceholder')"
             required
           >
         </div>
 
         <div class="form-group">
-          <label class="form-label">Email Address</label>
+          <label class="form-label">{{ $t('register.email') }}</label>
           <input 
             v-model="form.email" 
             type="email" 
             class="form-input" 
-            placeholder="name@example.com"
+            :placeholder="$t('register.emailPlaceholder')"
             required
           >
         </div>
 
         <div class="form-group">
-          <label class="form-label">Password</label>
+          <label class="form-label">{{ $t('register.password') }}</label>
           <input 
             v-model="form.password" 
             type="password" 
             class="form-input" 
-            placeholder="Min 8 characters"
+            :placeholder="$t('register.passwordPlaceholder')"
             required
           >
         </div>
 
         <div class="form-group">
-          <label class="form-label">Confirm Password</label>
+          <label class="form-label">{{ $t('register.confirmPassword') }}</label>
           <input 
             v-model="form.password_confirmation" 
             type="password" 
             class="form-input" 
-            placeholder="Repeat password"
+            :placeholder="$t('register.confirmPlaceholder')"
             required
           >
         </div>
 
         <button :disabled="auth.loading" type="submit" class="btn btn-primary w-full">
-          {{ auth.loading ? 'Creating account...' : 'Create Account' }}
+          {{ auth.loading ? $t('register.creatingBtn') : $t('register.createBtn') }}
         </button>
       </form>
 
       <div class="auth-footer">
-        <p>Already have an account? <RouterLink to="/login">Login here</RouterLink></p>
+        <p>{{ $t('register.alreadyAccount') }} <RouterLink to="/login">{{ $t('register.loginHere') }}</RouterLink></p>
       </div>
     </div>
   </div>

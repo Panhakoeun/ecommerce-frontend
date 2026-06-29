@@ -5,12 +5,14 @@ import { useCartStore } from '@/stores/cart';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import ProductCard from '@/components/ProductCard.vue';
+import { useI18n } from 'vue-i18n';
 
 const productStore = useProductStore();
 const cartStore = useCartStore();
 const authStore = useAuthStore();
 const router = useRouter();
 const showToast = inject('showToast');
+const { t } = useI18n();
 
 const selectedCategory = ref(null);
 
@@ -31,7 +33,7 @@ const addToCart = async (product, size = 'S') => {
     }
     const success = await cartStore.addToCart(product.id, 1, size);
     if (success) {
-        showToast(`${product.name} (${size}) added to cart!`);
+        showToast(t('toast.addedToCart', { product: product.name, size }));
     }
 };
 
@@ -40,8 +42,8 @@ const addToCart = async (product, size = 'S') => {
 <template>
   <div class="container animate-fade-in">
     <section class="hero">
-      <h1>Welcome<span class="gradient-text">To Our</span> Shop </h1>
-      <p>Choose the products what ever you want to buy </p>
+      <h1>{{ $t('home.welcome') }}<span class="gradient-text">{{ $t('home.toOur') }}</span> {{ $t('home.shop') }} </h1>
+      <p>{{ $t('home.subtitle') }}</p>
     </section>
 
     <section class="category-tabs glass-premium smooth-gpu animate-fade-in">
@@ -51,7 +53,7 @@ const addToCart = async (product, size = 'S') => {
           @click="filterByCategory(null)"
           class="tab-btn"
         >
-          All Collections
+          {{ $t('home.allCollections') }}
         </button>
         <button 
           v-for="cat in productStore.categories" 
@@ -71,7 +73,7 @@ const addToCart = async (product, size = 'S') => {
           <div class="skeleton-card" v-for="i in 8" :key="i"></div>
         </div>
         <div v-else-if="productStore.products.length === 0" class="empty-state">
-          No products found.
+          {{ $t('home.noProducts') }}
         </div>
         <transition-group name="list" tag="div" class="grid-container" v-else>
           <ProductCard 

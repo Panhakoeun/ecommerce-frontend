@@ -29,24 +29,24 @@ const formatDate = (dateStr) => {
 <template>
   <div class="container animate-fade-in">
     <div class="orders-header">
-      <h1>My <span class="gradient-text">Orders</span></h1>
-      <p>Tracking your shopping history</p>
+      <h1>{{ $t('orders.header') }} <span class="gradient-text">{{ $t('orders.headerGradient') }}</span></h1>
+      <p>{{ $t('orders.subtitle') }}</p>
     </div>
 
-    <div v-if="loading" class="loader">Loading orders...</div>
+    <div v-if="loading" class="loader">{{ $t('orders.loading') }}</div>
 
     <div v-else-if="orders.length === 0" class="empty-orders glass">
       <div class="empty-icon">📦</div>
-      <h3>No orders yet</h3>
-      <p>Your history will appear here once you make a purchase.</p>
-      <RouterLink to="/" class="btn btn-primary">Discover Products</RouterLink>
+      <h3>{{ $t('orders.empty') }}</h3>
+      <p>{{ $t('orders.emptyDesc') }}</p>
+      <RouterLink to="/" class="btn btn-primary">{{ $t('orders.discover') }}</RouterLink>
     </div>
 
     <div v-else class="orders-list">
       <div v-for="order in orders" :key="order.id" class="order-card glass">
         <div class="order-info">
           <div class="order-meta">
-            <span class="order-id">Order #{{ order.id }}</span>
+            <span class="order-id">{{ $t('orders.orderId') }} #{{ order.id }}</span>
             <span class="order-date">{{ formatDate(order.created_at) }}</span>
           </div>
           <div class="order-status" :class="order.status.toLowerCase()">
@@ -71,18 +71,18 @@ const formatDate = (dateStr) => {
 
         <div class="order-footer">
           <div class="shipping-info">
-            <span class="label">Shipping to:</span>
+            <span class="label">{{ $t('orders.shippingTo') }}</span>
             <span class="address">{{ order.address }}</span>
           </div>
           <div class="total-info">
-            <span>Total Amount</span>
+            <span>{{ $t('orders.totalAmount') }}</span>
             <span class="order-total">${{ order.total }}</span>
             <RouterLink
               v-if="order.status?.toLowerCase() === 'completed'"
               :to="{ name: 'order-receipt', params: { id: order.id } }"
               class="btn-receipt"
             >
-              🧾 View Receipt
+              🧾 {{ $t('orders.viewReceipt') }}
             </RouterLink>
           </div>
         </div>

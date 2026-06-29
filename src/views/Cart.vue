@@ -4,10 +4,12 @@ import { useCartStore } from '@/stores/cart';
 import api from '@/api/axios';
 import { useRouter } from 'vue-router';
 import { getImageUrl } from '@/utils/image';
+import { useI18n } from 'vue-i18n';
 
 const cartStore = useCartStore();
 const router = useRouter();
 const showToast = inject('showToast');
+const { t } = useI18n();
 
 const address = ref('');
 
@@ -39,17 +41,17 @@ const removeFromCart = async (id) => {
 
 const checkout = async () => {
     if (!address.value) {
-        showToast('Please enter your shipping address');
+        showToast(t('toast.addressRequired'));
         return;
     }
 
     try {
         await api.post('/orders', { address: address.value });
         cartStore.clearCart();
-        showToast('Order placed successfully!');
+        showToast(t('toast.orderSuccess'));
         router.push('/orders');
     } catch (err) {
-        showToast(err.response?.data?.message || 'Failed to place order');
+        showToast(err.response?.data?.message || t('toast.orderFailed'));
     }
 };
 </script>
@@ -57,17 +59,17 @@ const checkout = async () => {
 <template>
   <div class="container animate-fade-in">
     <div class="cart-header">
-      <h1>Shopping <span class="gradient-text">Cart</span></h1>
-      <p>Review your items and proceed to checkout</p>
+      <h1>{{ $t('cart.header') }} <span class="gradient-text">{{ $t('cart.headerGradient') }}</span></h1>
+      <p>{{ $t('cart.subtitle') }}</p>
     </div>
 
-    <div v-if="cartStore.loading" class="loader">Loading cart...</div>
+    <div v-if="cartStore.loading" class="loader">{{ $t('cart.loading') }}</div>
     
     <div v-else-if="cartStore.items.length === 0" class="empty-cart glass">
       <div class="empty-icon">🛒</div>
-      <h3>Your cart is empty</h3>
-      <p>Looks like you haven't added anything yet.</p>
-      <RouterLink to="/" class="btn btn-primary">Start Shopping</RouterLink>
+      <h3>{{ $t('cart.empty') }}</h3>
+      <p>{{ $t('cart.emptyDesc') }}</p>
+      <RouterLink to="/" class="btn btn-primary">{{ $t('cart.startShopping') }}</RouterLink>
     </div>
 
     <div v-else class="cart-layout">
@@ -82,41 +84,41 @@ const checkout = async () => {
                 <h4>{{ item.product.name }}</h4>
               </RouterLink>
               <p class="item-price">${{ formatPrice(itemPrice(item)) }}</p>
-              <p v-if="item.size" class="item-size">Size: {{ item.size }}</p>
+              <p v-if="item.size" class="item-size">{{ $t('cart.size') }}: {{ item.size }}</p>
             </div>
             <div class="item-actions">
-              <span class="qty">Qty: {{ item.quantity }}</span>
-              <button @click="removeFromCart(item.id)" class="btn-remove">Remove</button>
+              <span class="qty">{{ $t('cart.qty') }}: {{ item.quantity }}</span>
+              <button @click="removeFromCart(item.id)" class="btn-remove">{{ $t('cart.remove') }}</button>
             </div>
           </div>
         </div>
       </div>
 
       <div class="cart-summary glass">
-        <h3>Order Summary</h3>
+        <h3>{{ $t('cart.orderSummary') }}</h3>
         <div class="summary-row">
-          <span>Subtotal</span>
+          <span>{{ $t('cart.subtotal') }}</span>
           <span>${{ cartStore.cartTotal }}</span>
         </div>
         <div class="summary-row">
-          <span>Shipping</span>
-          <span class="free">FREE</span>
+          <span>{{ $t('cart.shipping') }}</span>
+          <span class="free">{{ $t('cart.free') }}</span>
         </div>
         <div class="summary-row total">
-          <span>Total</span>
+          <span>{{ $t('cart.total') }}</span>
           <span>${{ cartStore.cartTotal }}</span>
         </div>
 
         <div class="shipping-address">
-          <label>Shipping Address</label>
+          <label>{{ $t('cart.shippingAddress') }}</label>
           <textarea 
             v-model="address" 
-            placeholder="Enter your full delivery address..."
+            :placeholder="$t('cart.addressPlaceholder')"
             class="address-input glass"
           ></textarea>
         </div>
 
-        <button @click="checkout" class="btn btn-primary w-full">Proceed to Checkout</button>
+        <button @click="checkout" class="btn btn-primary w-full">{{ $t('cart.checkout') }}</button>
       </div>
     </div>
   </div>

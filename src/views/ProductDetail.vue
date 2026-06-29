@@ -5,6 +5,7 @@ import { useProductStore } from '@/stores/products';
 import { useCartStore } from '@/stores/cart';
 import { useAuthStore } from '@/stores/auth';
 import { getImageUrl } from '@/utils/image';
+import { useI18n } from 'vue-i18n';
 
 const route = useRoute();
 const router = useRouter();
@@ -12,6 +13,7 @@ const productStore = useProductStore();
 const cartStore = useCartStore();
 const authStore = useAuthStore();
 const showToast = inject('showToast');
+const { t } = useI18n();
 
 const product = ref(null);
 const loading = ref(true);
@@ -57,7 +59,7 @@ const addToCart = async () => {
     }
     const success = await cartStore.addToCart(product.value.id, quantity.value, selectedSize.value);
     if (success) {
-        showToast(`${product.value.name} (${selectedSize.value}) added to cart!`);
+        showToast(t('toast.addedToCart', { product: product.value.name, size: selectedSize.value }));
     }
 };
 
@@ -81,15 +83,15 @@ const goBack = () => {
     
     <div v-else-if="!product" class="error-state glass animate-fade-in">
       <div class="error-icon">❌</div>
-      <h2>Oops! Product not found</h2>
-      <p>The product you are looking for might have been removed or the link is broken.</p>
-      <RouterLink to="/" class="btn btn-primary">Back to Shop</RouterLink>
+      <h2>{{ $t('product.notFound') }}</h2>
+      <p>{{ $t('product.notFoundDesc') }}</p>
+      <RouterLink to="/" class="btn btn-primary">{{ $t('product.backToShop') }}</RouterLink>
     </div>
 
     <div v-else class="product-detail-layout">
       <!-- Back Button -->
       <button @click="goBack" class="back-btn glass">
-        <span>←</span> Back
+        <span>←</span> {{ $t('product.back') }}
       </button>
 
       <div class="product-grid-main">
@@ -104,7 +106,7 @@ const goBack = () => {
         <!-- Info section -->
         <div class="product-info-panel animate-fade-in">
             <div class="breadcrumb">
-                <RouterLink to="/">Shop</RouterLink> 
+                <RouterLink to="/">{{ $t('product.shop') }}</RouterLink> 
                 <span class="separator">/</span> 
                 <span class="active">{{ product.category?.name }}</span>
             </div>
@@ -122,17 +124,17 @@ const goBack = () => {
                 </div>
                 <div class="meta-item">
                     <span class="icon">⭐</span>
-                    <span>4.8 (120 reviews)</span>
+                    <span>4.8 (120 {{ $t('product.reviews') }})</span>
                 </div>
             </div>
 
             <div class="product-description glass">
-                <h3>Description</h3>
+                <h3>{{ $t('product.description') }}</h3>
                 <p>{{ product.description }}</p>
             </div>
 
             <div v-if="product.size_prices" class="size-price-panel glass">
-                <h3>Choose Size</h3>
+                <h3>{{ $t('product.chooseSize') }}</h3>
                 <div class="size-price-grid">
                     <button
                         v-for="size in sizes"
@@ -157,8 +159,8 @@ const goBack = () => {
                     </div>
                 </div>
                 <button @click="addToCart" class="btn btn-primary btn-lg" :disabled="cartStore.loading || product.stock <= 0">
-                    <span v-if="!cartStore.loading">Add to Cart</span>
-                    <span v-else>Adding...</span>
+                    <span v-if="!cartStore.loading">{{ $t('product.addToCart') }}</span>
+                    <span v-else>{{ $t('product.adding') }}</span>
                 </button>
             </div>
 
@@ -166,15 +168,15 @@ const goBack = () => {
                 <div class="perk">
                     <div class="perk-icon">💎</div>
                     <div class="perk-content">
-                        <strong>Premium Quality</strong>
-                        <p>Crafted with excellence</p>
+                        <strong>{{ $t('product.premiumQuality') }}</strong>
+                        <p>{{ $t('product.premiumDesc') }}</p>
                     </div>
                 </div>
                 <div class="perk">
                     <div class="perk-icon">⚡</div>
                     <div class="perk-content">
-                        <strong>Fast Delivery</strong>
-                        <p>2-3 business days</p>
+                        <strong>{{ $t('product.fastDelivery') }}</strong>
+                        <p>{{ $t('product.fastDesc') }}</p>
                     </div>
                 </div>
             </div>
@@ -184,7 +186,7 @@ const goBack = () => {
       <!-- Related Products -->
       <section class="related-section animate-fade-in" v-if="productStore.products.filter(p => p.id !== product.id).length > 0">
         <div class="section-header">
-            <h2 class="section-title">Similar <span class="gradient-text">Products</span></h2>
+            <h2 class="section-title">{{ $t('product.similar') }} <span class="gradient-text">{{ $t('product.similarGradient') }}</span></h2>
             <div class="section-line"></div>
         </div>
         

@@ -69,8 +69,9 @@ const closeMenu = () => {
 
       <!-- Desktop Nav Links -->
       <nav class="nav-links">
-        <button class="lang-btn" @click="toggleLanguage">
-          {{ locale === 'en' ? '🇰🇭 KM' : '🇬🇧 EN' }}
+        <button class="lang-btn" @click="toggleLanguage" aria-label="Change Language">
+          <span class="lang-icon">🌐</span>
+          <span>{{ locale === 'en' ? '🇰🇭 KM' : '🇬🇧 EN' }}</span>
         </button>
         <RouterLink to="/" class="nav-link">{{ $t('navbar.home') }}</RouterLink>
         <template v-if="auth.isAuthenticated">
@@ -92,8 +93,9 @@ const closeMenu = () => {
 
       <!-- Mobile Right Actions -->
       <div class="mobile-actions">
-        <button class="lang-btn-mobile" @click="toggleLanguage">
-          {{ locale === 'en' ? '🇰🇭' : '🇬🇧' }}
+        <button class="lang-btn-mobile" @click="toggleLanguage" aria-label="Change Language">
+          <span class="lang-icon">🌐</span>
+          <span>{{ locale === 'en' ? '🇰🇭' : '🇬🇧' }}</span>
         </button>
         <button class="icon-btn" @click="searchOpen = !searchOpen" aria-label="Toggle search">
           🔍
@@ -281,6 +283,13 @@ const closeMenu = () => {
   color: var(--text-main);
   cursor: pointer;
   transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.lang-icon {
+  font-size: 1.05rem;
 }
 
 .lang-btn:hover {
@@ -349,6 +358,7 @@ const closeMenu = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.3rem;
 }
 
 .icon-btn {
