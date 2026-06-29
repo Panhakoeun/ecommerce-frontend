@@ -4,11 +4,19 @@ import { useAuthStore } from '@/stores/auth';
 import { useCartStore } from '@/stores/cart';
 import { useProductStore } from '@/stores/products';
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const auth = useAuthStore();
 const cart = useCartStore();
 const productStore = useProductStore();
 const router = useRouter();
+const { t, locale } = useI18n();
+
+const toggleLanguage = () => {
+    const newLocale = locale.value === 'en' ? 'km' : 'en';
+    locale.value = newLocale;
+    localStorage.setItem('user-locale', newLocale);
+};
 
 const menuOpen = ref(false);
 const searchOpen = ref(false);
@@ -40,8 +48,8 @@ const closeMenu = () => {
     <div class="container nav-content">
       <!-- Logo -->
       <RouterLink to="/" class="logo" @click="closeMenu">
-        <span class="logo-icon">Ecommerce </span>
-        <span class="logo-text"><span>Shop</span> Web</span>
+        <span class="logo-icon">{{ $t('navbar.ecommerce') }}</span>
+        <span class="logo-text"><span>{{ $t('navbar.shopWeb').split(' ')[0] }}</span> {{ $t('navbar.shopWeb').split(' ').slice(1).join(' ') }}</span>
       </RouterLink>
 
       <!-- Desktop Search -->
@@ -52,7 +60,7 @@ const closeMenu = () => {
                 v-model="productStore.searchQuery" 
                 @input="handleSearch"
                 type="text" 
-                placeholder="Search products..." 
+                :placeholder="$t('navbar.searchPlaceholder')" 
                 class="search-input"
             >
             <div v-if="productStore.loading" class="search-spinner"></div>
@@ -61,26 +69,32 @@ const closeMenu = () => {
 
       <!-- Desktop Nav Links -->
       <nav class="nav-links">
-        <RouterLink to="/" class="nav-link">Home</RouterLink>
+        <button class="lang-btn" @click="toggleLanguage">
+          {{ locale === 'en' ? '🇰🇭 KM' : '🇬🇧 EN' }}
+        </button>
+        <RouterLink to="/" class="nav-link">{{ $t('navbar.home') }}</RouterLink>
         <template v-if="auth.isAuthenticated">
-          <RouterLink to="/orders" class="nav-link">My Orders</RouterLink>
+          <RouterLink to="/orders" class="nav-link">{{ $t('navbar.myOrders') }}</RouterLink>
           <RouterLink to="/cart" class="nav-link cart-link">
-            Cart
+            {{ $t('navbar.cart') }}
             <span v-if="cart.cartCount > 0" class="badge">{{ cart.cartCount }}</span>
           </RouterLink>
           <div class="user-menu">
             <span class="user-name">{{ auth.user?.name }}</span>
-            <button @click="handleLogout" class="btn-logout">Logout</button>
+            <button @click="handleLogout" class="btn-logout">{{ $t('navbar.logout') }}</button>
           </div>
         </template>
         <template v-else>
-          <RouterLink to="/login" class="nav-link">Login</RouterLink>
-          <RouterLink to="/register" class="btn btn-primary">Sign Up</RouterLink>
+          <RouterLink to="/login" class="nav-link">{{ $t('navbar.login') }}</RouterLink>
+          <RouterLink to="/register" class="btn btn-primary">{{ $t('navbar.signUp') }}</RouterLink>
         </template>
       </nav>
 
       <!-- Mobile Right Actions -->
       <div class="mobile-actions">
+        <button class="lang-btn-mobile" @click="toggleLanguage">
+          {{ locale === 'en' ? '🇰🇭' : '🇬🇧' }}
+        </button>
         <button class="icon-btn" @click="searchOpen = !searchOpen" aria-label="Toggle search">
           🔍
         </button>
@@ -104,7 +118,7 @@ const closeMenu = () => {
           v-model="productStore.searchQuery" 
           @input="handleSearch"
           type="text" 
-          placeholder="Search products..." 
+          :placeholder="$t('navbar.searchPlaceholder')" 
           class="search-input"
         >
       </div>
@@ -112,21 +126,21 @@ const closeMenu = () => {
 
     <!-- Mobile Drawer -->
     <div class="mobile-menu" :class="{ open: menuOpen }">
-      <RouterLink to="/" class="mobile-nav-link" @click="closeMenu">🏠 Home</RouterLink>
+      <RouterLink to="/" class="mobile-nav-link" @click="closeMenu">🏠 {{ $t('navbar.home') }}</RouterLink>
       <template v-if="auth.isAuthenticated">
-        <RouterLink to="/orders" class="mobile-nav-link" @click="closeMenu">📦 My Orders</RouterLink>
+        <RouterLink to="/orders" class="mobile-nav-link" @click="closeMenu">📦 {{ $t('navbar.myOrders') }}</RouterLink>
         <RouterLink to="/cart" class="mobile-nav-link" @click="closeMenu">
-          🛒 Cart
+          🛒 {{ $t('navbar.cart') }}
           <span v-if="cart.cartCount > 0" class="badge">{{ cart.cartCount }}</span>
         </RouterLink>
         <div class="mobile-user-info">
           <span class="user-name">👤 {{ auth.user?.name }}</span>
         </div>
-        <button @click="handleLogout" class="mobile-logout-btn">Logout</button>
+        <button @click="handleLogout" class="mobile-logout-btn">{{ $t('navbar.logout') }}</button>
       </template>
       <template v-else>
-        <RouterLink to="/login" class="mobile-nav-link" @click="closeMenu">🔑 Login</RouterLink>
-        <RouterLink to="/register" class="mobile-signup-btn" @click="closeMenu">✨ Sign Up</RouterLink>
+        <RouterLink to="/login" class="mobile-nav-link" @click="closeMenu">🔑 {{ $t('navbar.login') }}</RouterLink>
+        <RouterLink to="/register" class="mobile-signup-btn" @click="closeMenu">✨ {{ $t('navbar.signUp') }}</RouterLink>
       </template>
     </div>
   </header>
@@ -257,6 +271,24 @@ const closeMenu = () => {
   background: rgba(99, 102, 241, 0.08);
 }
 
+.lang-btn {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.8rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.lang-btn:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--primary);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
 .cart-link {
   display: flex;
   align-items: center;
@@ -302,6 +334,21 @@ const closeMenu = () => {
   display: none;
   align-items: center;
   gap: 0.5rem;
+}
+
+.lang-btn-mobile {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border);
+  height: 40px;
+  padding: 0 0.5rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .icon-btn {

@@ -28,26 +28,26 @@ const handleSubmit = async () => {
   <div class="container flex-center">
     <div class="auth-card glass animate-fade-in">
       <div class="auth-header">
-        <h2>Welcome Back</h2>
-        <p>Login to your account to continue</p>
+        <h2>{{ $t('login.welcome') }}</h2>
+        <p>{{ $t('login.loginToAccount') }}</p>
       </div>
 
       <form @submit.prevent="handleSubmit" class="auth-form">
         <div v-if="error" class="error-alert">{{ error }}</div>
 
         <div class="form-group">
-          <label class="form-label">Email Address</label>
+          <label class="form-label">{{ $t('login.email') }}</label>
           <input 
             v-model="form.email" 
             type="email" 
             class="form-input" 
-            placeholder="name@example.com"
+            :placeholder="$t('login.emailPlaceholder')"
             required
           >
         </div>
 
         <div class="form-group">
-          <label class="form-label">Password</label>
+          <label class="form-label">{{ $t('login.password') }}</label>
           <input 
             v-model="form.password" 
             type="password" 
@@ -58,12 +58,12 @@ const handleSubmit = async () => {
         </div>
 
         <button :disabled="auth.loading" type="submit" class="btn btn-primary w-full">
-          {{ auth.loading ? 'Logging in...' : 'Login' }}
+          {{ auth.loading ? $t('login.loggingIn') : $t('login.loginBtn') }}
         </button>
       </form>
 
       <div class="auth-footer">
-        <p>Don't have an account? <RouterLink to="/register">Create one</RouterLink></p>
+        <p>{{ $t('login.noAccount') }} <RouterLink to="/register">{{ $t('login.createOne') }}</RouterLink></p>
       </div>
     </div>
   </div>
