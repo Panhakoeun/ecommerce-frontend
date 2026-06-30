@@ -17,7 +17,7 @@ const selectedSize = ref('S');
 
 const formatPrice = (value) => Number(value || 0).toFixed(2);
 
-const selectedPrice = computed(() => props.product.size_prices?.[selectedSize.value] ?? props.product.price);
+const selectedPrice = computed(() => props.product.size_prices?.[selectedSize.value] ?? 0);
 </script>
 
 <template>
@@ -49,7 +49,7 @@ const selectedPrice = computed(() => props.product.size_prices?.[selectedSize.va
       
       <p class="description">{{ product.description?.substring(0, 50) }}...</p>
 
-      <div v-if="product.size_prices" class="size-prices" aria-label="Choose product size">
+      <div class="size-prices" aria-label="Choose product size">
         <button
           v-for="size in sizes"
           :key="size"

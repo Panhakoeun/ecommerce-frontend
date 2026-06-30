@@ -29,7 +29,21 @@ const sizePrices = (item) => {
     return prices;
 };
 
-const itemPrice = (item) => item.price ?? sizePrices(item)[item.size] ?? item.product?.price ?? 0;
+const itemPrice = (item) => {
+    if (!item.product) return 0;
+    
+    if (item.product.price_s !== undefined) {
+        const _sp = {
+            S: Number(item.product.price_s ?? 0),
+            M: Number(item.product.price_m ?? 0),
+            L: Number(item.product.price_l ?? 0),
+        };
+        const sizeKey = item.size ?? 'S';
+        return _sp[sizeKey];
+    }
+    
+    return item.price ?? sizePrices(item)[item.size] ?? item.product?.price ?? 0;
+};
 
 onMounted(async () => {
     await cartStore.fetchCart();

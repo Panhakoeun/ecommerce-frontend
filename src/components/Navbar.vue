@@ -80,6 +80,9 @@ const closeMenu = () => {
             {{ $t('navbar.cart') }}
             <span v-if="cart.cartCount > 0" class="badge">{{ cart.cartCount }}</span>
           </RouterLink>
+          <a v-if="auth.user?.is_admin" href="http://localhost:8000/admin/dashboard" class="nav-link admin-link">
+            ⚙️ Admin Panel
+          </a>
           <div class="user-menu">
             <span class="user-name">{{ auth.user?.name }}</span>
             <button @click="handleLogout" class="btn-logout">{{ $t('navbar.logout') }}</button>
@@ -135,6 +138,9 @@ const closeMenu = () => {
           🛒 {{ $t('navbar.cart') }}
           <span v-if="cart.cartCount > 0" class="badge">{{ cart.cartCount }}</span>
         </RouterLink>
+        <a v-if="auth.user?.is_admin" href="http://localhost:8000/admin/dashboard" class="mobile-nav-link">
+          ⚙️ Admin Panel
+        </a>
         <div class="mobile-user-info">
           <span class="user-name">👤 {{ auth.user?.name }}</span>
         </div>
@@ -271,6 +277,16 @@ const closeMenu = () => {
 .nav-link:hover, .router-link-active {
   color: var(--primary);
   background: rgba(99, 102, 241, 0.08);
+}
+
+.admin-link {
+  color: #4b5563;
+  text-decoration: none;
+}
+
+.admin-link:hover {
+  color: #6366f1;
+  background: rgba(99, 102, 241, 0.1);
 }
 
 .lang-btn {

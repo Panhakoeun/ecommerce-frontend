@@ -15,9 +15,21 @@ const normalizeSizePrices = (sizePrices) => {
 };
 
 const linePrice = (item) => {
-    const sizePrices = normalizeSizePrices(item.product?.size_prices);
+    if (!item.product) return 0;
+    
+    if (item.product.price_s !== undefined) {
+        const sizePrices = {
+            S: Number(item.product.price_s ?? 0),
+            M: Number(item.product.price_m ?? 0),
+            L: Number(item.product.price_l ?? 0),
+        };
+        const sizeKey = item.size ?? 'S';
+        return sizePrices[sizeKey];
+    }
 
-    return Number(item.price ?? sizePrices[item.size] ?? item.product?.price ?? 0);
+    const sizePrices = normalizeSizePrices(item.product.size_prices);
+    const sizeKey = item.size ?? 'S';
+    return Number(item.price ?? sizePrices[sizeKey] ?? 0);
 };
 
 export const useCartStore = defineStore('cart', {

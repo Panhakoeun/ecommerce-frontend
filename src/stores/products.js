@@ -28,12 +28,16 @@ const normalizeSizePrices = (sizePrices) => {
 const normalizeProduct = (product) => {
     if (!product) return product;
 
-    const sizePrices = normalizeSizePrices(product.size_prices);
+    const sizePrices = {
+        S: Number(product.price_s ?? 0),
+        M: Number(product.price_m ?? 0),
+        L: Number(product.price_l ?? 0),
+    };
 
     return {
         ...product,
         size_prices: sizePrices,
-        price: product.price ?? sizePrices.S ?? 0,
+        price: sizePrices.S,
     };
 };
 

@@ -65,7 +65,7 @@ const formatDate = (dateStr) => {
               </RouterLink>
               <span class="item-qty">x{{ item.quantity }}</span>
             </div>
-            <span class="item-price">${{ item.price }}</span>
+            <span class="item-price">${{ parseFloat(item.price).toFixed(2) }}</span>
           </div>
         </div>
 
@@ -76,7 +76,7 @@ const formatDate = (dateStr) => {
           </div>
           <div class="total-info">
             <span>{{ $t('orders.totalAmount') }}</span>
-            <span class="order-total">${{ order.total }}</span>
+            <span class="order-total">${{ parseFloat(order.total).toFixed(2) }}</span>
             <RouterLink
               v-if="order.status?.toLowerCase() === 'completed'"
               :to="{ name: 'order-receipt', params: { id: order.id } }"
@@ -154,6 +154,8 @@ const formatDate = (dateStr) => {
 
 .order-status.completed { background: #dcfce7; color: #15803d; }
 .order-status.pending { background: #fef9c3; color: #a16207; }
+.order-status.processing { background: #dbeafe; color: #1d4ed8; }
+.order-status.cancelled { background: #fee2e2; color: #b91c1c; }
 
 .order-items {
   margin-bottom: 2rem;

@@ -22,7 +22,7 @@ const sizes = ['S', 'M', 'L'];
 const selectedSize = ref('S');
 
 const formatPrice = (value) => Number(value || 0).toFixed(2);
-const selectedPrice = computed(() => product.value?.size_prices?.[selectedSize.value] ?? product.value?.price ?? 0);
+const selectedPrice = computed(() => product.value?.size_prices?.[selectedSize.value] ?? 0);
 
 const loadProductData = async (id) => {
     loading.value = true;
@@ -133,7 +133,7 @@ const goBack = () => {
                 <p>{{ product.description }}</p>
             </div>
 
-            <div v-if="product.size_prices" class="size-price-panel glass">
+            <div class="size-price-panel glass">
                 <h3>{{ $t('product.chooseSize') }}</h3>
                 <div class="size-price-grid">
                     <button
@@ -145,7 +145,7 @@ const goBack = () => {
                         @click="selectedSize = size"
                     >
                         <span class="size-label">{{ size }}</span>
-                        <strong>${{ formatPrice(product.size_prices[size]) }}</strong>
+                        <strong>${{ formatPrice(product.size_prices?.[size]) }}</strong>
                     </button>
                 </div>
             </div>
@@ -197,7 +197,7 @@ const goBack = () => {
                         <img :src="getImageUrl(rel.image || rel.image_url)" :alt="rel.name">
                     </div>
                     <h4>{{ rel.name }}</h4>
-                    <p class="rel-price">${{ formatPrice(rel.price) }}</p>
+                    <p class="rel-price">${{ formatPrice(rel.size_prices?.S ?? rel.price_s) }}</p>
                 </RouterLink>
             </div>
         </div>
